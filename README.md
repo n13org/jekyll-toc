@@ -1,9 +1,9 @@
 # jekyll-toc
 
-![CI](https://github.com/toshimaru/jekyll-toc/workflows/CI/badge.svg)
-[![Gem Version](https://badge.fury.io/rb/jekyll-toc.svg)](http://badge.fury.io/rb/jekyll-toc)
-[![Code Climate](https://codeclimate.com/github/toshimaru/jekyll-toc/badges/gpa.svg)](https://codeclimate.com/github/toshimaru/jekyll-toc)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/cd56b207f327603662a1/test_coverage)](https://codeclimate.com/github/toshimaru/jekyll-toc/test_coverage)
+![CI](https://github.com/n13org/jekyll-toc-navtotop/workflows/CI/badge.svg)
+[![Gem Version](https://badge.fury.io/rb/jekyll-toc-navtotop.svg)](http://badge.fury.io/rb/jekyll-toc-navtotop)
+[![Code Climate](https://codeclimate.com/github/n13org/jekyll-toc-navtotop/badges/gpa.svg)](https://codeclimate.com/github/n13org/jekyll-toc-navtotop)
+
 
 ## Table of Contents
 
@@ -66,7 +66,9 @@ This filter places the TOC directly above the content.
 
 If you'd like separated TOC and content, you can use `{% toc %}` tag (or `toc_only` filter) and `inject_anchors` filter.
 
-#### `{% toc %}` tag
+### `toc_only` filter
+
+⚠️ ~~Please use `{% toc %}` instead of `{{ content | toc_only }}`.~~
 
 Generates the TOC itself as described [below](#generated-html).
 Mostly useful in cases where the TOC should _not_ be placed immediately
@@ -84,9 +86,9 @@ above the content but at some other place of the page, i.e. an aside.
 ```
 
 :warning: **`{% toc %}` Tag Limitation**
-
+#### Current Limitation
 `{% toc %}` can be available only in [Jekyll Posts](https://jekyllrb.com/docs/step-by-step/08-blogging/) and [Jekyll Collections](https://jekyllrb.com/docs/collections/). If you'd like to use `{% toc %}` except posts or collections, please use `toc_only` filter as described below.
-
+**`{% toc %}` can be available only in [Jekyll Posts](https://jekyllrb.com/docs/step-by-step/08-blogging/) and [Jekyll Collections](https://jekyllrb.com/docs/collections/). If any concern or issue, please report it on [issue](https://github.com/toshimaru/jekyll-toc/issues/new).**
 ```html
 <div>
   <div id="table-of-contents">
@@ -111,6 +113,14 @@ They are of the form:
 
 This is only useful when the TOC itself should be placed at some other
 location with the `toc_only` filter.
+
+## Testing
+
+To run the tests you `rake`. First install gem packages local and run `rake test`.
+
+```shell
+rake test
+```
 
 ## Generated HTML
 
