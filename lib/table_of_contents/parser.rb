@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-require "erb"
-include ERB::Util
+require 'table_of_contents/helper'
 
 module Jekyll
   module TableOfContents
     # Parse html contents and generate table of contents
     class Parser
-      PUNCTUATION_REGEXP = /[^\p{Word}\- ]/u.freeze
+      include ::Jekyll::TableOfContents::Helper
 
       def initialize(html, options = {})
         @doc = Nokogiri::HTML::DocumentFragment.parse(html)
@@ -20,11 +19,12 @@ module Jekyll
       end
 
       def build_toc
-        %(<ul class="#{@configuration.list_class}">\n#{build_toc_list(@entries)}</ul>)
+        %(<#{list_tag} class="#{@configuration.list_class}">\n#{build_toc_list(@entries)}</#{list_tag}>)
       end
 
       def inject_anchors_into_html
         @entries.each do |entry|
+          # NOTE: `entry[:id]` is automatically URL encoded by Nokogiri
           entry[:header_content].add_previous_sibling(
             %(<a class="anchor" href="##{entry[:id]}" aria-hidden="true"><span class="octicon octicon-link"></span></a>)
           )
@@ -44,13 +44,7 @@ module Jekyll
           .reject { |n| n.classes.include?(@configuration.no_toc_class) }
           .inject([]) do |entries, node|
           text = node.text
-          id = node.attribute('id') || text
-               .downcase
-               .gsub(PUNCTUATION_REGEXP, '') # remove punctuation
-               .tr(' ', '-') # replace spaces with dash
-          if (@configuration.anchor_id_url_encoded)
-            id = url_encode(id)
-          end
+          id = node.attribute('id') || generate_toc_id(text)
 
           suffix_num = headers[id]
           headers[id] += 1
@@ -80,7 +74,7 @@ module Jekyll
             next_i = i + 1
             if next_i < entries.count && entries[next_i][:h_num] > min_h_num
               nest_entries = get_nest_entries(entries[next_i, entries.count], min_h_num)
-              toc_list << %(\n<ul#{ul_attributes}>\n#{build_toc_list(nest_entries)}</ul>\n)
+              toc_list << %(\n<#{list_tag}#{ul_attributes}>\n#{build_toc_list(nest_entries)}</#{list_tag}>\n)
               i += nest_entries.count
             end
             # Add the closing tag for the current entry in the list
@@ -113,7 +107,7 @@ module Jekyll
       end
 
       def toc_headings_in_no_toc_section
-        if @configuration.no_toc_section_class.is_a? Array
+        if @configuration.no_toc_section_class.is_a?(Array)
           @configuration.no_toc_section_class.map { |cls| toc_headings_within(cls) }.join(',')
         else
           toc_headings_within(@configuration.no_toc_section_class)
@@ -126,6 +120,10 @@ module Jekyll
 
       def ul_attributes
         @ul_attributes ||= @configuration.sublist_class.empty? ? '' : %( class="#{@configuration.sublist_class}")
+      end
+
+      def list_tag
+        @list_tag ||= @configuration.ordered_list ? 'ol' : 'ul'
       end
     end
   end

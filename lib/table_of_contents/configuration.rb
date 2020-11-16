@@ -4,13 +4,14 @@ module Jekyll
   module TableOfContents
     # jekyll-toc configuration class
     class Configuration
-      attr_accessor :toc_levels, :no_toc_class, :no_toc_section_class,
+      attr_reader :toc_levels, :no_toc_class, :ordered_list, :no_toc_section_class,
                     :list_class, :sublist_class, :item_class, :item_prefix,
                     :anchor_id_url_encoded
 
       DEFAULT_CONFIG = {
         'min_level' => 1,
         'max_level' => 6,
+        'ordered_list' => false,
         'no_toc_section_class' => 'no_toc_section',
         'list_class' => 'section-nav',
         'sublist_class' => '',
@@ -23,6 +24,7 @@ module Jekyll
         options = generate_option_hash(options)
 
         @toc_levels = options['min_level']..options['max_level']
+        @ordered_list = options['ordered_list']
         @no_toc_class = 'no_toc'
         @no_toc_section_class = options['no_toc_section_class']
         @list_class = options['list_class']
